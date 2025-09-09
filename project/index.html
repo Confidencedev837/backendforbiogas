@@ -279,7 +279,7 @@
         alert("Enter all values!");
         return;
       }
-https://backendforbiogas.onrender.com/predict?temp=${temp}&pH=${ph}
+
       try {
         const res = await fetch(`https://backendforbiogas.onrender.com/predict?temp=${temp}&pH=${ph}`);
         const data = await res.json();
@@ -318,4 +318,5 @@ https://backendforbiogas.onrender.com/predict?temp=${temp}&pH=${ph}
   </script>
 </body>
 </html>
+
 
