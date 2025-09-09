@@ -279,9 +279,9 @@
         alert("Enter all values!");
         return;
       }
-
+https://backendforbiogas.onrender.com/predict?temp=${temp}&pH=${ph}
       try {
-        const res = await fetch(`http://127.0.0.1:8000/predict?temp=${temp}&pH=${ph}`);
+        const res = await fetch(`https://backendforbiogas.onrender.com/predict?temp=${temp}&pH=${ph}`);
         const data = await res.json();
 
         const yieldValue = parseFloat(data.biogas_yield).toFixed(3);
@@ -318,3 +318,4 @@
   </script>
 </body>
 </html>
+
