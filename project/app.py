@@ -4,8 +4,8 @@ import joblib
 import numpy as np
 
 
-model_yield = joblib.load("yield_model.pkl")
-model_ch4 = joblib.load("ch4_model.pkl")
+model_yield = joblib.load("project/yield_model.pkl")
+model_ch4 = joblib.load("project/ch4_model.pkl")
 
 app = FastAPI()
 
@@ -38,4 +38,5 @@ app.add_middleware(
 #     data=pickle.load(f);
 
 # print(data)
+
 
