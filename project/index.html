@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biogas Predictor Pro 🌱</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #16a34a;
+      --secondary: #15803d;
+      --bg: #f0fdf4;
+      --card-bg: #ffffff;
+      --text: #1f2937;
+      --accent: #dcfce7;
+      --shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+
+    [data-theme="dark"] {
+      --primary: #22c55e;
+      --secondary: #16a34a;
+      --bg: #111827;
+      --card-bg: #1f2937;
+      --text: #f9fafb;
+      --accent: #064e3b;
+      --shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    body {
+      font-family: 'Playpen Sans', cursive;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      transition: all 0.4s ease;
+    }
+
+    .header {
+      margin: 25px 0;
+      text-align: center;
+    }
+    .header h1 {
+      color: var(--primary);
+      font-size: 2.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--primary);
+      border: none;
+      border-radius: 100rem;
+      padding: 12px;
+      cursor: pointer;
+      color: white;
+      font-size: 1.2rem;
+      transition: transform 0.3s;
+    }
+    .theme-toggle:hover {
+      transform: rotate(15deg) scale(1.1);
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      width: 90%;
+      max-width: 450px;
+      margin: 0 auto; /* Center card */
+      transition: all 0.4s ease;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 6px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin: 15px 8px 6px 0px;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+      transition: border 0.3s;
+    }
+    input:focus, select:focus {
+      border: 1px solid var(--primary);
+      outline: none;
+    }
+
+    button.predict {
+      background: var(--primary);
+      color: white;
+      font-weight: bold;
+      margin: 20px 0 0;
+      padding: 14px;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s;
+    }
+    button.predict:hover {
+      background: var(--secondary);
+      transform: translateY(-2px);
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 20px;
+      background: var(--accent);
+      border-radius: 15px;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.5s ease;
+    }
+    .result.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .result p {
+      margin: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* History */
+    .history {
+      width: 300px;
+      max-width: 350px;
+      background: var(--card-bg);
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: var(--shadow);
+      margin: 20px auto;
+    }
+    .history h3 {
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+    .history ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-radius: 15px;
+      overflow: hidden;
+    }
+    .history li {
+      background: var(--card-bg);
+      padding: 12px;
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .history li:last-child {
+      border-bottom: none;
+    }
+    .clear-history {
+      margin-top: 10px;
+      background: #ef4444;
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .clear-history:hover {
+      background: #dc2626;
+    }
+
+    /* Big screens: dock history to far right */
+    @media (min-width: 1000px) {
+      .page-layout {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+        position: relative;
+      }
+      .history {
+        position: absolute;
+        right: 40px;
+        top: 0;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body data-theme="dark"> <!-- Default theme is dark -->
+
+  <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+
+  <header class="header">
+    <h1> Biogas Predictor🌱</h1>
+  </header>
+
+  <div class="page-layout">
+    <!-- Input Card -->
+    <div class="card">
+      <label for="temp">Temperature (°C)</label>
+      <input type="number" id="temp" placeholder="Enter temperature">
+
+      <label for="ph">pH</label>
+      <input type="number" id="ph" step="0.01" placeholder="Enter pH">
+
+      
+
+      <button class="predict" onclick="predict()"><i class="fas fa-rocket"></i> Predict Biogas</button>
+
+      <div class="result" id="result">
+        <p id="yield"><i class="fas fa-gas-pump"></i> Biogas Yield: --</p>
+        <p id="ch4"><i class="fas fa-fire"></i> CH₄ Content: --</p>
+        <p id="tip"><i class="fas fa-lightbulb"></i> Optimization Tip: --</p>
+      </div>
+    </div>
+
+    <!-- History Section -->
+    <section class="history">
+      <h3><i class="fas fa-history"></i> Prediction History</h3>
+      <ul id="history-list"></ul>
+      <button class="clear-history" onclick="clearHistory()"><i class="fas fa-trash"></i> Clear History</button>
+    </section>
+  </div>
+
+  <script>
+    let history = [];
+
+    function toggleTheme() {
+      const body = document.body;
+      const icon = document.querySelector('.theme-toggle i');
+      if (body.dataset.theme === "light") {
+        body.dataset.theme = "dark";
+        icon.classList.replace("fa-sun", "fa-moon");
+      } else {
+        body.dataset.theme = "light";
+        icon.classList.replace("fa-moon", "fa-sun");
+      }
+    }
+
+    function getTip(yieldValue) {
+      if (yieldValue > 0.5) return "Excellent conditions! Scale up production 🌟";
+      if (yieldValue > 0.3) return "Good yield. Adjust pH for more efficiency 🔧";
+      return "Low yield. Re-check temperature and feedstock ⚠️";
+    }
+
+    async function predict() {
+      const temp = document.getElementById("temp").value;
+      const ph = document.getElementById("ph").value;
+      // const substrate = document.getElementById("substrate").value;
+
+      if (!temp || !ph) {
+        alert("Enter all values!");
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/predict?temp=${temp}&pH=${ph}`);
+        const data = await res.json();
+
+        const yieldValue = parseFloat(data.biogas_yield).toFixed(3);
+        const ch4Value = parseFloat(data.ch4_percent).toFixed(2);
+
+        document.getElementById("yield").innerHTML = `<i class="fas fa-gas-pump"></i> Biogas Yield: ${yieldValue} m³/kg`;
+        document.getElementById("ch4").innerHTML = `<i class="fas fa-fire"></i> CH₄ Content: ${ch4Value} %`;
+        document.getElementById("tip").innerHTML = `<i class="fas fa-lightbulb"></i> ${getTip(yieldValue)}`;
+
+        document.getElementById("result").classList.add("show");
+
+        history.push({ temp, ph, yield: yieldValue, ch4: ch4Value });
+        updateHistory();
+      } catch (e) {
+        alert("Backend not running!");
+        console.error(e);
+      }
+    }
+
+    function updateHistory() {
+      const list = document.getElementById("history-list");
+      list.innerHTML = "";
+      history.forEach((item, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>📌 ${i+1}: Temp ${item.temp}°C, pH ${item.ph}, Yield ${item.yield}</span>`;
+        list.appendChild(li);
+      });
+    }
+
+    function clearHistory() {
+      history = [];
+      updateHistory();
+    }
+  </script>
+</body>
+</html>
