@@ -224,13 +224,14 @@
   <div class="page-layout">
     <!-- Input Card -->
     <div class="card">
+      <label for="hrt">Hydraulic Retention Time (days)</label>
+      <input type="number" id="hrt" placeholder="Enter days">
+
       <label for="temp">Temperature (°C)</label>
-      <input type="number" id="temp" placeholder="Enter temperature">
+      <input type="number" id="temp" placeholder="Enter temperature" min="25" max="35">
 
       <label for="ph">pH</label>
-      <input type="number" id="ph" step="0.01" placeholder="Enter pH">
-
-      
+      <input type="number" id="ph" step="0.01" placeholder="Enter pH" min="6.5" max="7.5">
 
       <button class="predict" onclick="predict()"><i class="fas fa-rocket"></i> Predict Biogas</button>
 
@@ -271,17 +272,28 @@
     }
 
     async function predict() {
-      const temp = document.getElementById("temp").value;
-      const ph = document.getElementById("ph").value;
-      // const substrate = document.getElementById("substrate").value;
+      const hrt = parseFloat(document.getElementById("hrt").value);
+      const temp = parseFloat(document.getElementById("temp").value);
+      const ph = parseFloat(document.getElementById("ph").value);
 
-      if (!temp || !ph) {
-        alert("Enter all values!");
+      if (!hrt || !temp || !ph) {
+        alert("⚠️ Enter all values!");
+        return;
+      }
+
+      // Range validation
+      if (temp < 25 || temp > 35) {
+        alert("🌡️ Temperature must be between 25°C and 35°C!");
+        return;
+      }
+      if (ph < 6.5 || ph > 7.5) {
+        alert("⚗️ pH must be between 6.5 and 7.5!");
         return;
       }
 
       try {
-        const res = await fetch(`https://backendforbiogas.onrender.com/predict?temp=${temp}&pH=${ph}`);
+        // Pass all three inputs to backend
+        const res = await fetch(`https://backendforbiogas.onrender.com/predict?temp=${temp}&pH=${ph}&HRT=${hrt}`);
         const data = await res.json();
 
         const yieldValue = parseFloat(data.biogas_yield).toFixed(3);
@@ -293,7 +305,7 @@
 
         document.getElementById("result").classList.add("show");
 
-        history.push({ temp, ph, yield: yieldValue, ch4: ch4Value });
+        history.push({ hrt, temp, ph, yield: yieldValue, ch4: ch4Value });
         updateHistory();
       } catch (e) {
         alert("Backend not running!");
@@ -306,7 +318,7 @@
       list.innerHTML = "";
       history.forEach((item, i) => {
         const li = document.createElement("li");
-        li.innerHTML = `<span>📌 ${i+1}: Temp ${item.temp}°C, pH ${item.ph}, Yield ${item.yield}</span>`;
+        li.innerHTML = `<span>📌 ${i+1}: HRT ${item.hrt}d, Temp ${item.temp}°C, pH ${item.ph}, Yield ${item.yield}</span>`;
         list.appendChild(li);
       });
     }
@@ -318,5 +330,3 @@
   </script>
 </body>
 </html>
-
-
